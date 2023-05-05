@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Formik, Field, Form } from 'formik';
+import { Formik } from 'formik';
 import {
   SearchForm,
   SearchFormButton,
