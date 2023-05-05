@@ -1,20 +1,20 @@
-import PropTypes from 'prop-types';
-import { Audio } from 'react-loader-spinner';
+import { BallTriangle } from 'react-loader-spinner';
+import { LoaderStyle } from './Loader.styled';
 
 export const Loader = () => {
   return (
-    <>
-      <Audio
-        height="80"
-        width="80"
-        radius="9"
-        color="green"
-        ariaLabel="three-dots-loading"
-        wrapperStyle
-        wrapperClass
+    <LoaderStyle>
+      <BallTriangle
+        height={100}
+        width={100}
+        radius={5}
+        color="rgb(63, 81, 181)"
+        ariaLabel="ball-triangle-loading"
+        wrapperClass={{}}
+        wrapperStyle=""
+        visible={true}
       />
-    </>
+    </LoaderStyle>
   );
 };
 
-Loader.propTypes = {};

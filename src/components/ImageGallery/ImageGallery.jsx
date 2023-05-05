@@ -22,4 +22,7 @@ export const ImageGallery = ({ data, fullImg }) => {
   }
 };
 
-ImageGallery.propTypes = {};
+ImageGallery.propTypes = {
+  data: PropTypes.array.isRequired,
+  fullImg: PropTypes.func.isRequired,
+};

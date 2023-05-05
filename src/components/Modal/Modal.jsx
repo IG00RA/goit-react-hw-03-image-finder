@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { ModalStyle, Overlay } from './Modal.styled';
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
@@ -33,5 +32,3 @@ export class Modal extends Component {
     );
   }
 }
-
-Modal.propTypes = {};
