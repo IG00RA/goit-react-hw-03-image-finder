@@ -1,9 +1,14 @@
 import PropTypes from 'prop-types';
+import { ImageGalleryImageStyle } from './ImageGalleryItem.styled';
 
-export const ImageGalleryItem = ({ imgUrl, imgAlt }) => {
+export const ImageGalleryItem = ({ fullUrl, imgUrl, imgAlt, openImage }) => {
   return (
     <>
-      <img alt={imgAlt} src={imgUrl} />
+      <ImageGalleryImageStyle
+        alt={imgAlt}
+        src={imgUrl}
+        onClick={() => openImage(fullUrl, imgAlt)}
+      />
     </>
   );
 };

@@ -1,5 +1,12 @@
 import PropTypes from 'prop-types';
 import { Formik, Field, Form } from 'formik';
+import {
+  SearchForm,
+  SearchFormButton,
+  SearchFormButtonLabel,
+  SearchFormInput,
+  SearchHeader,
+} from './Searchbar.styled';
 
 export const Searchbar = ({ onSubmit }) => {
   return (
@@ -19,18 +26,18 @@ export const Searchbar = ({ onSubmit }) => {
         resetForm();
       }}
     >
-      <header className="searchbar">
-        <Form>
-          <button type="submit" className="button">
-            <span className="button-label">Search</span>
-          </button>
-          <Field
+      <SearchHeader>
+        <SearchForm>
+          <SearchFormButton type="submit">
+            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+          </SearchFormButton>
+          <SearchFormInput
             type="text"
             name="input"
             placeholder="Search images and photos"
           />
-        </Form>
-      </header>
+        </SearchForm>
+      </SearchHeader>
     </Formik>
   );
 };

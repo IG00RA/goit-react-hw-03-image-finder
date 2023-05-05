@@ -1,30 +1,25 @@
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import PropTypes from 'prop-types';
+import { ImageGalleryStyle } from './ImageGallery.styled';
+import { ImageGalleryItemStyle } from 'components/ImageGalleryItem/ImageGalleryItem.styled';
 
-export const ImageGallery = ({ data }) => {
-  console.log(data);
+export const ImageGallery = ({ data, fullImg }) => {
   if (data.length !== 0) {
     return (
-      <ul className="gallery">
+      <ImageGalleryStyle>
         {data.map(item => (
-          <li key={item.id}>
-            <ImageGalleryItem imgUrl={item.webformatURL} imgAlt={item.tags} />
-          </li>
+          <ImageGalleryItemStyle key={item.id}>
+            <ImageGalleryItem
+              openImage={fullImg}
+              fullUrl={item.largeImageURL}
+              imgUrl={item.webformatURL}
+              imgAlt={item.tags}
+            />
+          </ImageGalleryItemStyle>
         ))}
-      </ul>
+      </ImageGalleryStyle>
     );
   }
 };
 
 ImageGallery.propTypes = {};
-
-// getImage(userInput);
-
-// <StyledList>
-//   {getContacts.map(contact => (
-//     <StyledItem
-//       <ContactItem contact={contact} />
-//       <button onClick={() => onDelete(contact.id)}>Delete</button>
-//     </StyledItem>
-//   ))}
-// </StyledList>;

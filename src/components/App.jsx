@@ -3,6 +3,9 @@ import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import axios from 'axios';
 import { Loader } from './Loader/Loader';
+import { GlobalStyle } from './GlobalStyles';
+import { AppStyle } from './App.styled';
+import { Modal } from './Modal/Modal';
 
 axios.defaults.baseURL = 'https://pixabay.com/api';
 const API_KEY = '34434498-1935a5c1deda7e012c81c56f8';
@@ -12,6 +15,15 @@ export class App extends Component {
     userInput: '',
     data: [],
     isLoading: false,
+    showModal: false,
+    currentImg: '',
+    currentAlt: '',
+  };
+
+  toggleModal = () => {
+    this.setState(state => ({
+      showModal: !state.showModal,
+    }));
   };
 
   getImage = async (userInput, page = 1) => {
@@ -29,14 +41,29 @@ export class App extends Component {
     this.setState({ userInput: userInput });
     this.getImage(userInput);
   };
+  openImage = (fullUrl, alt) => {
+    this.setState({ currentImg: fullUrl });
+    this.setState({ currentAlt: alt });
+    this.toggleModal();
+  };
 
   render() {
-    const { handleSubmit, state } = this;
+    const { handleSubmit, toggleModal, openImage, state } = this;
     return (
-      <>
+      <AppStyle>
+        <GlobalStyle />
+        {state.showModal && (
+          <Modal onClose={toggleModal}>
+            <img src={state.currentImg} alt={state.currentAlt} />
+          </Modal>
+        )}
         <Searchbar onSubmit={handleSubmit} />
-        {state.isLoading ? <Loader /> : <ImageGallery data={state.data} />}
-      </>
+        {state.isLoading ? (
+          <Loader />
+        ) : (
+          <ImageGallery data={state.data} fullImg={openImage} />
+        )}
+      </AppStyle>
     );
   }
 }
