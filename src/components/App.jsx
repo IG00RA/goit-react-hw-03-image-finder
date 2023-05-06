@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-import axios from 'axios';
 import { Loader } from './Loader/Loader';
 import { GlobalStyle } from './GlobalStyles';
 import { AppStyle } from './App.styled';
@@ -9,20 +8,48 @@ import { Modal } from './Modal/Modal';
 import { Button } from './Button/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-axios.defaults.baseURL = 'https://pixabay.com/api';
-const API_KEY = '34434498-1935a5c1deda7e012c81c56f8';
+import { getImage } from '../api';
 
 export class App extends Component {
   state = {
     userInput: '',
     data: [],
+    error: null,
     isLoading: false,
     showModal: false,
     visibleButton: false,
     currentImg: '',
     currentAlt: '',
-    perPage: 24,
+    page: 1,
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.userInput !== this.state.userInput ||
+      prevState.page !== this.state.page
+    ) {
+      this.fetchImg(this.state.userInput, this.state.page);
+    }
+  }
+
+  fetchImg = async (input, page) => {
+    try {
+      this.setState({ isLoading: true });
+
+      const fetchImg = await getImage(input, page);
+
+      this.setState(prevState => ({
+        data: [...prevState.data, ...fetchImg.hits],
+      }));
+      this.setState({ visibleButton: false });
+      if (fetchImg.total > 12) {
+        this.setState({ visibleButton: true });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
 
   toggleModal = () => {
@@ -31,37 +58,19 @@ export class App extends Component {
     }));
   };
 
-  getImage = async (userInput, perPage = 12) => {
-    const response = await axios.get(
-      `/?q=${userInput}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-    );
-    this.setState({
-      data: response.data.hits,
-    });
-    this.setState({ isLoading: false });
-    this.setState({ visibleButton: true });
-    if (response.data.total <= 12) {
-      this.setState({ visibleButton: false });
-    }
-  };
   loadMore = () => {
     this.setState({
-      perPage: this.state.perPage + 12,
+      page: this.state.page + 1,
     });
-    this.getImage(this.state.userInput, this.state.perPage);
   };
 
   handleSubmit = userInput => {
     if (userInput.trim().length > 0) {
-      this.setState({ visibleButton: false });
-      this.setState({ isLoading: true });
       this.setState({ userInput: userInput });
-      this.getImage(userInput);
-      this.setState({
-        perPage: 24,
-      });
+      this.setState({ page: 1 });
+      this.setState({ data: [] });
     } else {
-      toast('Please enter your request', {
+      toast.error('Please enter your request', {
         position: 'top-right',
         autoClose: 2000,
         hideProgressBar: false,
@@ -83,18 +92,6 @@ export class App extends Component {
     const { handleSubmit, toggleModal, loadMore, openImage, state } = this;
     return (
       <AppStyle>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
         <GlobalStyle />
         {state.showModal && (
           <Modal onClose={toggleModal}>
@@ -108,6 +105,19 @@ export class App extends Component {
           <ImageGallery data={state.data} fullImg={openImage} />
         )}
         {state.visibleButton && <Button onLoadMore={loadMore} />}
+        {this.setState.error && <div>{this.setState.error}</div>}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </AppStyle>
     );
   }
