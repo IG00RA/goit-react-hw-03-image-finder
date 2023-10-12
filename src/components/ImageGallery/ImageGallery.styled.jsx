@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { BsCardImage } from 'react-icons/bs';
 
 export const ImageGalleryStyle = styled.ul`
   display: grid;
@@ -11,4 +12,15 @@ export const ImageGalleryStyle = styled.ul`
   list-style: none;
   margin-left: auto;
   margin-right: auto;
+`;
+
+export const BsCardImageSvg = styled(BsCardImage)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  fill: #fff;
+  opacity: 0.3;
 `;

@@ -1,14 +1,15 @@
 import { Component } from 'react';
-import { Searchbar } from './Searchbar/Searchbar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Loader } from './Loader/Loader';
-import { GlobalStyle } from './GlobalStyles';
-import { AppStyle } from './App.styled';
-import { Modal } from './Modal/Modal';
-import { Button } from './Button/Button';
+import { Searchbar } from '../Searchbar/Searchbar';
+import { ImageGallery } from '../ImageGallery/ImageGallery';
+import { Loader } from '../Loader/Loader';
+import { GlobalStyle } from '../GlobalStyles';
+import { AppStyle, StyledSection } from './App.styled';
+import { Modal } from '../Modal/Modal';
+import { Button } from '../Button/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getImage } from '../api';
+import { getImage } from '../../api';
+import { Preview } from 'components/Preview/Preview';
 
 export class App extends Component {
   state = {
@@ -21,6 +22,8 @@ export class App extends Component {
     currentImg: '',
     currentAlt: '',
     page: 1,
+    preview: true,
+    status: 'idle',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -35,7 +38,7 @@ export class App extends Component {
   fetchImg = async (input, page) => {
     try {
       this.setState({ isLoading: true });
-
+      this.setState({ status: 'search' });
       const fetchImg = await getImage(input, page);
 
       this.setState(prevState => ({
@@ -88,37 +91,54 @@ export class App extends Component {
     this.toggleModal();
   };
 
+  startDiscover = () => {
+    this.setState({ preview: false });
+  };
+
   render() {
     const { handleSubmit, toggleModal, loadMore, openImage, state } = this;
+    const { preview } = state;
+    if (preview) {
+      return <Preview startDiscover={this.startDiscover} />;
+    }
+
     return (
-      <AppStyle>
-        <GlobalStyle />
-        {state.showModal && (
-          <Modal onClose={toggleModal}>
-            <img src={state.currentImg} alt={state.currentAlt} />
-          </Modal>
-        )}
+      <>
         <Searchbar onSubmit={handleSubmit} />
-        {state.isLoading ? (
-          <Loader />
-        ) : (
-          <ImageGallery data={state.data} fullImg={openImage} />
-        )}
-        {state.visibleButton && <Button onLoadMore={loadMore} />}
-        {this.setState.error && <div>{this.setState.error}</div>}
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </AppStyle>
+        <StyledSection>
+          <AppStyle>
+            <GlobalStyle />
+            {state.showModal && (
+              <Modal onClose={toggleModal}>
+                <img src={state.currentImg} alt={state.currentAlt} />
+              </Modal>
+            )}
+            {state.isLoading ? (
+              <Loader />
+            ) : (
+              <ImageGallery
+                data={state.data}
+                fullImg={openImage}
+                status={state.status}
+              />
+            )}
+            {state.visibleButton && <Button onLoadMore={loadMore} />}
+            {this.setState.error && <div>{this.setState.error}</div>}
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </AppStyle>
+        </StyledSection>
+      </>
     );
   }
 }
